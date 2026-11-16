@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="ur" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DUKAN ONE - Apni Digital Dukaan</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #4f46e5;
+  --primary-hover: #4338ca;
+  --success: #10b981;
+  --bg: #f8fafc;
+  --card-bg: #ffffff;
+  --text: #1e293b;
+  --text-light: #64748b;
+  --border: #e2e8f0;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+body { background: var(--bg); color: var(--text); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 12px; }
+.app-container { width: 100%; max-width: 480px; background: var(--card-bg); border-radius: 24px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.08), 0 8px 10px -6px rgba(0,0,0,0.08); overflow: hidden; display: flex; flex-direction: column; min-height: 90vh; }
+.hidden { display: none !important; }
+
+/* Header */
+.header { background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%); color: #fff; padding: 20px; text-align: center; position: relative; }
+.header h1 { font-size: 20px; font-weight: 800; letter-spacing: 0.5px; margin-bottom: 4px; }
+.header p { font-size: 13px; opacity: 0.9; font-weight: 500; }
+.lang-btn { position: absolute; top: 15px; right: 15px; background: rgba(255,255,255,0.2); border: none; color: #fff; padding: 5px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; }
+.lang-btn:hover { background: rgba(255,255,255,0.3); }
+
+/* Content Body */
+.body-content { padding: 20px; flex: 1; overflow-y: auto; }
+.card { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 18px; margin-bottom: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+label { display: block; font-size: 12px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; margin-top: 14px; }
+label:first-of-type { margin-top: 0; }
+input, select, textarea { width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: 12px; font-size: 14px; color: var(--text); background: #fdfdfd; transition: all 0.2s; outline: none; }
+input:focus, select:focus, textarea:focus { border-color: var(--primary); background: #fff; box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1); }
+
+/* Buttons */
+.btn { width: 100%; padding: 14px; border: none; border-radius: 12px; font-weight: 700; font-size: 15px; cursor: pointer; transition: transform 0.1s, background 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 14px; }
+.btn:active { transform: scale(0.98); }
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-primary:hover { background: var(--primary-hover); }
+.btn-success { background: var(--success); color: #fff; }
+.btn-dark { background: #0f172a; color: #fff; }
+.btn-outline { background: #fff; border: 1.5px solid var(--border); color: var(--text); }
+
+/* Packages */
+.pkg-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 8px; }
+.pkg { border: 2px solid var(--border); padding: 14px; border-radius: 14px; cursor: pointer; transition: all 0.2s; background: #fff; display: flex; justify-content: space-between; align-items: center; }
+.pkg.sel { border-color: var(--primary); background: #eef2ff; }
+.pkg b { display: block; font-size: 14px; color: var(--text); }
+.pkg small { color: var(--text-light); font-size: 12px; display: block; }
+.pkg .price { font-weight: 800; color: var(--primary); font-size: 15px; }
+
+/* Dashboard Stats */
+.stats-box { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+.stat-card { background: #f8fafc; border: 1px solid var(--border); padding: 14px; border-radius: 14px; text-align: center; }
+.stat-card span { display: block; font-size: 12px; color: var(--text-light); font-weight: 600; text-transform: uppercase; }
+.stat-card h3 { font-size: 18px; font-weight: 800; color: var(--primary); margin-top: 4px; }
+
+/* Order Item */
+.order-card { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
+.order-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+.order-title { font-weight: 700; font-size: 15px; color: var(--text); }
+.order-price { font-weight: 800; color: var(--success); font-size: 15px; }
+.order-details { font-size: 13px; color: var(--text-light); line-height: 1.5; }
+.order-details b { color: var(--text); }
+.order-img { width: 100%; max-height: 160px; object-fit: cover; border-radius: 10px; margin-top: 10px; border: 1px solid var(--border); }
+.wa-chat-btn { background: #25d366; color: #fff; text-decoration: none; padding: 10px; border-radius: 10px; font-weight: 700; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 10px; }
+.badge { background: #eef2ff; color: var(--primary); padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; display: inline-block; margin-bottom: 6px; }
+
+.center { text-align: center; }
+.small { font-size: 12px; color: var(--text-light); }
+.link-box { background: #f1f5f9; padding: 10px; border-radius: 10px; font-size: 12px; word-break: break-all; margin-top: 8px; color: var(--primary); font-weight: 600; text-align: center; }
+.payment-box { background: #fdf2f8; border: 1px solid #fbcfe8; padding: 12px; border-radius: 12px; margin-top: 14px; font-size: 13px; color: #db2777; }
+</style>
+</head>
+<body>
+
+<div class="app-container">
+  
+  <!-- SETUP / LOGIN VIEW -->
+  <div id="setupView" class="hidden">
+    <div class="header">
+      <button class="lang-btn" onclick="toggleLanguage()">🌐 <span id="langText1">English</span></button>
+      <h1 id="t_setupTitle">DUKAN ONE 🚀</h1>
+      <p id="t_setupSub">Apna Online Store Sirf 1 Minute Mein Banao</p>
+    </div>
+    <div class="body-content">
+      <div class="card">
+        <h3 id="t_setupHeading" style="margin-bottom: 14px; font-size: 16px;">✨ Nayi Dukaan Setup Karo</h3>
+        <label id="t_lblShopName">Dukaan Ka Naam *</label>
+        <input id="shopName" placeholder="Misal: Fatima Boutique">
+        
+        <label id="t_lblOwnerName">Apna Naam *</label>
+        <input id="ownerName" placeholder="Aapka Naam">
+        
+        <label id="t_lblPhone">Mobile / WhatsApp Number *</label>
+        <input id="ownerPhone" placeholder="03xx-xxxxxxx">
+        
+        <label id="t_lblCats">Categories (Comma separated) *</label>
+        <input id="shopCategories" placeholder="Misal: Abaya, Lawn, Suits, Jewellery">
+
+        <label id="t_lblPin">4 Digit PIN (Password) *</label>
+        <input id="ownerPin" type="password" placeholder="Misal: 1234" maxlength="4">
+
+        <label id="t_lblPkg">Package Choose Karo</label>
+        <div class="pkg-grid">
+          <div class="pkg sel" onclick="selPkg(this,'7','7 Days Free Trial','0')">
+            <div><b>🎁 7 Days Free Trial</b><small id="t_p0">Pehle try karo</small></div>
+            <span class="price">Rs 0</span>
+          </div>
+          <div class="pkg" onclick="selPkg(this,'30','Monthly Plan','999')">
+            <div><b>⭐ Monthly Plan</b><small id="t_p1">30 Din ke liye</small></div>
+            <span class="price">Rs 999</span>
+          </div>
+          <div class="pkg" onclick="selPkg(this,'180','6 Months Plan','3499')">
+            <div><b>🔥 6 Months Plan</b><small id="t_p2">Bari bachat</small></div>
+            <span class="price">Rs 3,499</span>
+          </div>
+          <div class="pkg" onclick="selPkg(this,'365','1 Year Plan','5999')">
+            <div><b>👑 1 Year Plan</b><small id="t_p3">Best value</small></div>
+            <span class="price">Rs 5,999</span>
+          </div>
+        </div>
+
+        <div id="t_payInfo" class="payment-box">
+          <b>💳 JazzCash / EasyPaisa Payment Info:</b><br>
+          Paid packages ke liye is number par payment bhejiye: <b>0333-2286382</b> (Title: Zaki / Dukan One) aur payment ka screenshot admin ko dein.
+        </div>
+
+        <button id="t_btnSetup" class="btn btn-success" onclick="doSetup()">✨ Dukaan Shuru Karo</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD VIEW -->
+  <div id="dashView" class="hidden">
+    <div class="header">
+      <button class="lang-btn" onclick="toggleLanguage()">🌐 <span id="langText2">English</span></button>
+      <h1 id="dashShopName">DUKAN</h1>
+      <p id="dashPkgInfo">Active Plan</p>
+    </div>
+    <div class="body-content">
+      
+      <div class="stats-box">
+        <div class="stat-card">
+          <span id="t_statOrders">Total Orders</span>
+          <h3 id="statOrders">0</h3>
+        </div>
+        <div class="stat-card">
+          <span id="t_statSales">Total Sales</span>
+          <h3 id="statSales">Rs 0</h3>
+        </div>
+      </div>
+
+      <div class="card" style="background: #eef2ff; border-color: #c7d2fe;">
+        <label id="t_lblBioLink" style="color: var(--primary); margin-top:0;">🔗 Instagram / FB / WhatsApp Bio Link</label>
+        <p id="t_bioDesc" class="small">Yeh link apne status ya bio par lagayein:</p>
+        <div class="link-box" id="custLinkDisplay">https://...</div>
+        <button id="t_btnCopy" class="btn btn-primary" style="margin-top: 10px; padding: 10px;" onclick="copyStoreLink()">📋 Link Copy Karo</button>
+      </div>
+
+      <button id="t_btnTestCust" class="btn btn-dark" onclick="showCustomerView()">🛍️ Customer Order Form Dekho (Test)</button>
+      
+      <div style="display: flex; justify-content: space-between; align-items: center; margin: 20px 0 10px;">
+        <h3 id="t_ordersTitle" style="font-size: 16px; font-weight: 700;">📦 Orders</h3>
+        <select id="categoryFilter" style="width: auto; padding: 6px 10px; font-size: 12px;" onchange="loadOrders()">
+          <option id="t_optAll" value="ALL">Sab Categories</option>
+        </select>
+      </div>
+
+      <div id="ordersContainer"></div>
+
+      <button id="t_btnLogout" class="btn btn-outline" style="color: #ef4444; border-color: #fca5a5; margin-top: 30px;" onclick="logout()">🔒 Logout / Switch Store</button>
+    </div>
+  </div>
+
+  <!-- CUSTOMER ORDER FORM VIEW -->
+  <div id="custView" class="hidden">
+    <div class="header">
+      <button class="lang-btn" onclick="toggleLanguage()">🌐 <span id="langText3">English</span></button>
+      <h1 id="custShopTitle">DUKAN</h1>
+      <p id="t_custSub">Apna Order Book Karein</p>
+    </div>
+    <div class="body-content">
+      <div class="card">
+        <label id="t_cName">Aapka Naam *</label>
+        <input id="cName" placeholder="Poora Naam">
+
+        <label id="t_cPhone">Mobile Number *</label>
+        <input id="cPhone" placeholder="03xx-xxxxxxx">
+
+        <label id="t_cCity">City *</label>
+        <input id="cCity" placeholder="Karachi / Lahore / Islamabad">
+
+        <label id="t_cAddr">Poora Address *</label>
+        <textarea id="cAddr" placeholder="Ghar ka pata, House #, Street #" rows="2"></textarea>
+
+        <label id="t_cCat">Category Select Karein *</label>
+        <select id="cCategory"></select>
+
+        <label id="t_cItem">Item / Product Ka Naam *</label>
+        <input id="cItem" placeholder="Misal: Black Embroidered Suit">
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div>
+            <label id="t_cQty">Quantity</label>
+            <input id="cQty" type="number" value="1">
+          </div>
+          <div>
+            <label id="t_cPrice">Price (Rs)</label>
+            <input id="cPrice" type="number" placeholder="2500">
+          </div>
+        </div>
+
+        <label id="t_cPic">Item Ki Picture / Screenshot (Optional)</label>
+        <input type="file" id="itemPic" accept="image/*" onchange="previewImage(this)">
+        <img id="imgPreviewTag" style="display:none; width:100%; max-height:150px; object-fit:cover; border-radius:10px; margin-top:8px;">
+
+        <button id="t_btnSubmitOrder" class="btn btn-success" onclick="submitOrder()">✅ Order Confirm Karein</button>
+        <p id="orderSuccessMsg" class="center" style="margin-top: 10px; font-weight: 700;"></p>
+        
+        <button id="t_btnBack" class="btn btn-outline" style="margin-top: 10px;" onclick="initApp()">⬅️ Back to Dashboard</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let currentLang = 'ur'; // 'ur' for Roman Urdu, 'en' for English
+
+const dict = {
+  ur: {
+    langLabel: "English",
+    setupTitle: "DUKAN ONE 🚀",
+    setupSub: "Apna Online Store Sirf 1 Minute Mein Banao",
+    setupHeading: "✨ Nayi Dukaan Setup Karo",
+    lblShopName: "Dukaan Ka Naam *",
+    lblOwnerName: "Apna Naam *",
+    lblPhone: "Mobile / WhatsApp Number *",
+    lblCats: "Categories (Comma separated) *",
+    lblPin: "4 Digit PIN (Password) *",
+    lblPkg: "Package Choose Karo",
+    p0: "Pehle try karo",
+    p1: "30 Din ke liye",
+    p2: "Bari bachat",
+    p3: "Best value",
+    payInfo: "<b>💳 JazzCash / EasyPaisa Payment Info:</b><br>Paid packages ke liye is number par payment bhejiye: <b>0333-2286382</b> (Title: Zaki / Dukan One) aur payment ka screenshot admin ko dein.",
+    btnSetup: "✨ Dukaan Shuru Karo",
+    statOrders: "Total Orders",
+    statSales: "Total Sales",
+    lblBioLink: "🔗 Instagram / FB / WhatsApp Bio Link",
+    bioDesc: "Yeh link apne status ya bio par lagayein:",
+    btnCopy: "📋 Link Copy Karo",
+    btnTestCust: "🛍️ Customer Order Form Dekho (Test)",
+    ordersTitle: "📦 Orders",
+    optAll: "Sab Categories",
+    btnLogout: "🔒 Logout / Switch Store",
+    custSub: "Apna Order Book Karein",
+    cName: "Aapka Naam *",
+    cPhone: "Mobile Number *",
+    cCity: "City *",
+    cAddr: "Poora Address *",
+    cCat: "Category Select Karein *",
+    cItem: "Item / Product Ka Naam *",
+    cQty: "Quantity",
+    cPrice: "Price (Rs)",
+    cPic: "Item Ki Picture / Screenshot (Optional)",
+    btnSubmitOrder: "✅ Order Confirm Karein",
+    btnBack: "⬅️ Back to Dashboard"
+  },
+  en: {
+    langLabel: "اردو",
+    setupTitle: "DUKAN ONE 🚀",
+    setupSub: "Create Your Online Store in 1 Minute",
+    setupHeading: "✨ Setup Your New Shop",
+    lblShopName: "Shop Name *",
+    lblOwnerName: "Your Name *",
+    lblPhone: "Mobile / WhatsApp Number *",
+    lblCats: "Categories (Comma separated) *",
+    lblPin: "4 Digit PIN (Password) *",
+    lblPkg: "Choose Package",
+    p0: "Try first",
+    p1: "For 30 Days",
+    p2: "Great savings",
+    p3: "Best value",
+    payInfo: "<b>💳 JazzCash / EasyPaisa Payment Info:</b><br>Send payment for paid packages to: <b>0333-2286382</b> (Title: Zaki / Dukan One) and share screenshot with admin.",
+    btnSetup: "✨ Start Shop",
+    statOrders: "Total Orders",
+    statSales: "Total Sales",
+    lblBioLink: "🔗 Instagram / FB / WhatsApp Bio Link",
+    bioDesc: "Put this link on your status or bio:",
+    btnCopy: "📋 Copy Link",
+    btnTestCust: "🛍️ View Customer Order Form (Test)",
+    ordersTitle: "📦 Orders",
+    optAll: "All Categories",
+    btnLogout: "🔒 Logout / Switch Store",
+    custSub: "Book Your Order",
+    cName: "Your Name *",
+    cPhone: "Mobile Number *",
+    cCity: "City *",
+    cAddr: "Full Address *",
+    cCat: "Select Category *",
+    cItem: "Item / Product Name *",
+    cQty: "Quantity",
+    cPrice: "Price (Rs)",
+    cPic: "Item Picture / Screenshot (Optional)",
+    btnSubmitOrder: "✅ Confirm Order",
+    btnBack: "⬅️ Back to Dashboard"
+  }
+};
+
+function toggleLanguage() {
+  currentLang = currentLang === 'ur' ? 'en' : 'ur';
+  updateTexts();
+}
+
+function updateTexts() {
+  const t = dict[currentLang];
+  document.getElementById('langText1').innerText = t.langLabel;
+  document.getElementById('langText2').innerText = t.langLabel;
+  document.getElementById('langText3').innerText = t.langLabel;
+
+  document.getElementById('t_setupTitle').innerText = t.setupTitle;
+  document.getElementById('t_setupSub').innerText = t.setupSub;
+  document.getElementById('t_setupHeading').innerText = t.setupHeading;
+  document.getElementById('t_lblShopName').innerText = t.lblShopName;
+  document.getElementById('t_lblOwnerName').innerText = t.lblOwnerName;
+  document.getElementById('t_lblPhone').innerText = t.lblPhone;
+  document.getElementById('t_lblCats').innerText = t.lblCats;
+  document.getElementById('t_lblPin').innerText = t.lblPin;
+  document.getElementById('t_lblPkg').innerText = t.lblPkg;
+  document.getElementById('t_p0').innerText = t.p0;
+  document.getElementById('t_p1').innerText = t.p1;
+  document.getElementById('t_p2').innerText = t.p2;
+  document.getElementById('t_p3').innerText = t.p3;
+  document.getElementById('t_payInfo').innerHTML = t.payInfo;
+  document.getElementById('t_btnSetup').innerText = t.btnSetup;
+
+  document.getElementById('t_statOrders').innerText = t.statOrders;
+  document.getElementById('t_statSales').innerText = t.statSales;
+  document.getElementById('t_lblBioLink').innerText = t.lblBioLink;
+  document.getElementById('t_bioDesc').innerText = t.bioDesc;
+  document.getElementById('t_btnCopy').innerText = t.btnCopy;
+  document.getElementById('t_btnTestCust').innerText = t.btnTestCust;
+  document.getElementById('t_ordersTitle').innerText = t.ordersTitle;
+  document.getElementById('t_optAll').innerText = t.optAll;
+  document.getElementById('t_btnLogout').innerText = t.btnLogout;
+
+  document.getElementById('t_custSub').innerText = t.custSub;
+  document.getElementById('t_cName').innerText = t.cName;
+  document.getElementById('t_cPhone').innerText = t.cPhone;
+  document.getElementById('t_cCity').innerText = t.cCity;
+  document.getElementById('t_cAddr').innerText = t.cAddr;
+  document.getElementById('t_cCat').innerText = t.cCat;
+  document.getElementById('t_cItem').innerText = t.cItem;
+  document.getElementById('t_cQty').innerText = t.cQty;
+  document.getElementById('t_cPrice').innerText = t.cPrice;
+  document.getElementById('t_cPic').innerText = t.cPic;
+  document.getElementById('t_btnSubmitOrder').innerText = t.btnSubmitOrder;
+  document.getElementById('t_btnBack').innerText = t.btnBack;
+}
+
+function getStorage(k) { try { return localStorage.getItem(k); } catch(e) { return null; } }
+function setStorage(k, v) { try { localStorage.setItem(k, v); } catch(e) { alert('Storage Full!'); } }
+
+let store = JSON.parse(getStorage('dukan_store') || 'null');
+let selectedPkgDays = '7', selectedPkgName = '7 Days Free Trial', selectedPkgPrice = '0';
+let base64Pic = '';
+
+function selPkg(el, days, name, price) {
+  document.querySelectorAll('.pkg').forEach(p => p.classList.remove('sel'));
+  el.classList.add('sel');
+  selectedPkgDays = days;
+  selectedPkgName = name;
+  selectedPkgPrice = price;
+}
+
+function doSetup() {
+  const name = document.getElementById('shopName').value.trim();
+  const owner = document.getElementById('ownerName').value.trim();
+  const phone = document.getElementById('ownerPhone').value.trim();
+  const catsInput = document.getElementById('shopCategories').value.trim();
+  const pin = document.getElementById('ownerPin').value.trim();
+
+  if(!name || !owner || !phone || !catsInput || !pin) {
+    alert(currentLang === 'ur' ? 'Tamam zaroori fields (* wale) bharna lazmi hain!' : 'Please fill all required fields (*)!');
+    return;
+  }
+
+  const categories = catsInput.split(',').map(c => c.trim()).filter(c => c.length > 0);
+
+  let expiry = new Date();
+  expiry.setDate(expiry.getDate() + Number(selectedPkgDays));
+
+  store = {
+    name, owner, phone, pin,
+    categories,
+    pkg: selectedPkgName,
+    expiry: expiry.toISOString()
+  };
+
+  setStorage('dukan_store', JSON.stringify(store));
+  if(!getStorage('dukan_orders')) setStorage('dukan_orders', JSON.stringify([]));
+  
+  initApp();
+}
+
+function initApp() {
+  const params = new URLSearchParams(location.search);
+  if(params.get('customer') === '1') {
+    showCustomerView();
+    return;
+  }
+
+  if(!store) {
+    showView('setupView');
+  } else {
+    showView('dashView');
+    document.getElementById('dashShopName').innerText = store.name;
+    document.getElementById('dashPkgInfo').innerText = (currentLang === 'ur' ? 'Plan: ' : 'Plan: ') + store.pkg;
+    
+    let filterSelect = document.getElementById('categoryFilter');
+    let filterHtml = `<option id="t_optAll" value="ALL">${dict[currentLang].optAll}</option>`;
+    store.categories.forEach(cat => {
+      filterHtml += `<option value="${cat}">${cat}</option>`;
+    });
+    filterSelect.innerHTML = filterHtml;
+
+    const link = location.href.split('?')[0] + '?customer=1';
+    document.getElementById('custLinkDisplay').innerText = link;
+    loadOrders();
+  }
+  updateTexts();
+}
+
+function showView(id) {
+  ['setupView', 'dashView', 'custView'].forEach(v => document.getElementById(v).classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+}
+
+function copyStoreLink() {
+  const link = location.href.split('?')[0] + '?customer=1';
+  navigator.clipboard.writeText(link);
+  alert(currentLang === 'ur' ? '✨ Link Copy Ho Gaya!\nAb aap isay Instagram Bio, Facebook page ya WhatsApp status par paste kar sakti hain.' : '✨ Link Copied!\nYou can now paste it on Instagram Bio, Facebook or WhatsApp status.');
+}
+
+function showCustomerView() {
+  if(!store) { 
+    alert(currentLang === 'ur' ? 'Pehle dukaan setup karein!' : 'Please setup shop first!'); 
+    showView('setupView'); 
+    return; 
+  }
+  document.getElementById('custShopTitle').innerText = store.name;
+  
+  let catSelect = document.getElementById('cCategory');
+  let catHtml = '';
+  store.categories.forEach(cat => {
+    catHtml += `<option value="${cat}">${cat}</option>`;
+  });
+  catSelect.innerHTML = catHtml;
+
+  showView('custView');
+  updateTexts();
+}
+
+function previewImage(input) {
+  const file = input.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const img = new Image();
+    img.onload = function() {
+      const canvas = document.createElement('canvas');
+      const maxW = 500;
+      let scale = maxW / img.width;
+      if(scale > 1) scale = 1;
+      canvas.width = img.width * scale;
+      canvas.height = img.height * scale;
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+      base64Pic = canvas.toDataURL('image/jpeg', 0.6);
+      
+      const preview = document.getElementById('imgPreviewTag');
+      preview.src = base64Pic;
+      preview.style.display = 'block';
+    }
+    img.src = e.target.result;
+  }
+  reader.readAsDataURL(file);
+}
+
+function submitOrder() {
+  const name = document.getElementById('cName').value.trim();
+  const phone = document.getElementById('cPhone').value.trim();
+  const city = document.getElementById('cCity').value.trim();
+  const addr = document.getElementById('cAddr').value.trim();
+  const category = document.getElementById('cCategory').value;
+  const item = document.getElementById('cItem').value.trim();
+  const qty = document.getElementById('cQty').value || 1;
+  const price = document.getElementById('cPrice').value || 0;
+
+  if(!name || !phone || !city || !addr || !item) {
+    alert(currentLang === 'ur' ? 'Barah-e-karam tamam fields ko pur karein!' : 'Please fill all required fields!');
+    return;
+  }
+
+  const orders = JSON.parse(getStorage('dukan_orders') || '[]');
+  const newOrder = {
+    id: Date.now(),
+    name, phone, city, addr, category, item, qty, price,
+    pic: base64Pic,
+    date: new Date().toLocaleString()
+  };
+
+  orders.unshift(newOrder);
+  setStorage('dukan_orders', JSON.stringify(orders));
+
+  document.getElementById('orderSuccessMsg').innerText = currentLang === 'ur' ? '🎉 Aapka Order Successfully Place Ho Gaya!' : '🎉 Order Placed Successfully!';
+  
+  let sellerPhone = store.phone.replace(/[^0-9]/g, '');
+  if(sellerPhone.startsWith('0')) sellerPhone = '92' + sellerPhone.slice(1);
+  
+  const msg = encodeURIComponent(`🛍️ *New Order Received!*\n*Category:* ${category}\n*Item:* ${item} (x${qty})\n*Price:* Rs ${price * qty}\n*Customer:* ${name}\n*Phone:* ${phone}\n*Address:* ${addr}, ${city}`);
+  
+  setTimeout(() => {
+    window.open(`https://wa.me/${sellerPhone}?text=${msg}`, '_blank');
+  }, 1000);
+}
+
+function loadOrders() {
+  const orders = JSON.parse(getStorage('dukan_orders') || '[]');
+  const selectedCategory = document.getElementById('categoryFilter').value;
+
+  const filteredOrders = selectedCategory === 'ALL' 
+    ? orders 
+    : orders.filter(o => o.category === selectedCategory);
+
+  document.getElementById('statOrders').innerText = orders.length;
+  
+  const totalSales = orders.reduce((sum, o) => sum + (Number(o.price) * Number(o.qty)), 0);
+  document.getElementById('statSales').innerText = `Rs ${totalSales.toLocaleString()}`;
+
+  const container = document.getElementById('ordersContainer');
+  if(filteredOrders.length === 0) {
+    container.innerHTML = `<p class="center small" style="padding: 20px;">${currentLang === 'ur' ? 'Is category mein koi order mojood nahi hai.' : 'No orders found in this category.'}</p>`;
+    return;
+  }
+
+  let html = '';
+  filteredOrders.forEach((o) => {
+    const originalIndex = orders.findIndex(ord => ord.id === o.id);
+    let custWa = o.phone.replace(/[^0-9]/g, '');
+    if(custWa.startsWith('0')) custWa = '92' + custWa.slice(1);
+
+    const waText = currentLang === 'ur' ? '💬 Customer ko WhatsApp Karein' : '💬 Chat with Customer on WhatsApp';
+    const delText = currentLang === 'ur' ? '🗑️ Order Delete Karein' : '🗑️ Delete Order';
+
+    html += `
+      <div class="order-card">
+        <span class="badge">📂 ${o.category || 'General'}</span>
+        <div class="order-header">
+          <span class="order-title">${o.item} <small>(x${o.qty})</small></span>
+          <span class="order-price">Rs ${(o.price * o.qty).toLocaleString()}</span>
+        </div>
+        <div class="order-details">
+          📅 ${o.date}<br>
+          👤 <b>${o.name}</b> (${o.phone})<br>
+          📍 ${o.addr}, ${o.city}
+          ${o.pic ? `<img src="${o.pic}" class="order-img">` : ''}
+          <a class="wa-chat-btn" target="_blank" href="https://wa.me/${custWa}?text=${encodeURIComponent('Assalam-o-Alaikum ' + o.name + ', aapka order (' + o.item + ') confirm ho gaya hai!')}">
+            ${waText}
+          </a>
+          <button class="btn" style="background:#fee2e2; color:#ef4444; padding:8px; font-size:12px; margin-top:6px;" onclick="deleteOrder(${originalIndex})">${delText}</button>
+        </div>
+      </div>
+    `;
+  });
+  container.innerHTML = html;
+}
+
+function deleteOrder(index) {
+  if(!confirm(currentLang === 'ur' ? 'Kya aap waqai yeh order delete karna chahte hain?' : 'Are you sure you want to delete this order?')) return;
+  let orders = JSON.parse(getStorage('dukan_orders') || '[]');
+  orders.splice(index, 1);
+  setStorage('dukan_orders', JSON.stringify(orders));
+  loadOrders();
+}
+
+function logout() {
+  if(confirm(currentLang === 'ur' ? 'Kya aap logout karna chahte hain? (Aapka data save rahega)' : 'Do you want to logout? (Your data will remain saved)')) {
+    localStorage.removeItem('dukan_store');
+    store = null;
+    initApp();
+  }
+}
+
+initApp();
+</script>
+
+</body>
+</html>
