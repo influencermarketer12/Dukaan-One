@@ -3,7 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DUKAN ONE - SaaS Admin & Store Manager</title>
+<title>DUKAN ONE - SaaS Store & Order Manager</title>
+<!-- PWA Meta Tags for App Installation -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Dukan One">
+<meta name="theme-color" content="#4f46e5">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -23,9 +28,10 @@ body { background: var(--bg); color: var(--text); min-height: 100vh; display: fl
 .hidden { display: none !important; }
 
 /* Header */
-.header { background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%); color: #fff; padding: 20px; text-align: center; position: relative; }
+.header { background: var(--primary); color: #fff; padding: 22px 20px; text-align: center; position: relative; transition: background 0.3s; }
 .header h1 { font-size: 20px; font-weight: 800; letter-spacing: 0.5px; margin-bottom: 4px; }
 .header p { font-size: 13px; opacity: 0.9; font-weight: 500; }
+.shop-logo-circle { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 3px solid rgba(255,255,255,0.8); margin: 0 auto 8px; display: block; background: #fff; }
 .lang-btn { position: absolute; top: 15px; right: 15px; background: rgba(255,255,255,0.2); border: none; color: #fff; padding: 5px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; }
 .lang-btn:hover { background: rgba(255,255,255,0.3); }
 
@@ -37,20 +43,25 @@ label:first-of-type { margin-top: 0; }
 input, select, textarea { width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: 12px; font-size: 14px; color: var(--text); background: #fdfdfd; transition: all 0.2s; outline: none; }
 input:focus, select:focus, textarea:focus { border-color: var(--primary); background: #fff; box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1); }
 
+/* Color Picker */
+.color-grid { display: flex; gap: 10px; margin-top: 6px; }
+.color-dot { width: 32px; height: 32px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; transition: transform 0.2s; }
+.color-dot.active { border-color: #0f172a; transform: scale(1.15); }
+
 /* Buttons */
 .btn { width: 100%; padding: 14px; border: none; border-radius: 12px; font-weight: 700; font-size: 15px; cursor: pointer; transition: transform 0.1s, background 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 14px; }
 .btn:active { transform: scale(0.98); }
 .btn-primary { background: var(--primary); color: #fff; }
-.btn-primary:hover { background: var(--primary-hover); }
 .btn-success { background: var(--success); color: #fff; }
 .btn-dark { background: #0f172a; color: #fff; }
 .btn-outline { background: #fff; border: 1.5px solid var(--border); color: var(--text); }
 .btn-danger { background: var(--danger); color: #fff; }
+.btn-sm { padding: 8px 10px; font-size: 12px; margin-top: 6px; border-radius: 8px; }
 
 /* Packages */
 .pkg-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 8px; }
 .pkg { border: 2px solid var(--border); padding: 14px; border-radius: 14px; cursor: pointer; transition: all 0.2s; background: #fff; display: flex; justify-content: space-between; align-items: center; }
-.pkg.sel { border-color: var(--primary); background: #eef2ff; }
+.pkg.sel { border-color: var(--primary); background: #f8fafc; }
 .pkg b { display: block; font-size: 14px; color: var(--text); }
 .pkg small { color: var(--text-light); font-size: 12px; display: block; }
 .pkg .price { font-weight: 800; color: var(--primary); font-size: 15px; }
@@ -71,11 +82,15 @@ input:focus, select:focus, textarea:focus { border-color: var(--primary); backgr
 .order-img { width: 100%; max-height: 160px; object-fit: cover; border-radius: 10px; margin-top: 10px; border: 1px solid var(--border); }
 .wa-chat-btn { background: #25d366; color: #fff; text-decoration: none; padding: 10px; border-radius: 10px; font-weight: 700; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 10px; }
 .badge { background: #eef2ff; color: var(--primary); padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; display: inline-block; margin-bottom: 6px; }
+.badge-expired { background: #fee2e2; color: #ef4444; }
+.badge-active { background: #dcfce7; color: #16a34a; }
 
 .center { text-align: center; }
 .small { font-size: 12px; color: var(--text-light); }
 .link-box { background: #f1f5f9; padding: 10px; border-radius: 10px; font-size: 11px; word-break: break-all; margin-top: 8px; color: var(--primary); font-weight: 600; text-align: center; max-height: 60px; overflow: hidden; }
-.payment-box { background: #fdf2f8; border: 1px solid #fbcfe8; padding: 12px; border-radius: 12px; margin-top: 14px; font-size: 13px; color: #db2777; }
+.payment-box { background: #fdf2f8; border: 1px solid #fbcfe8; padding: 12px; border-radius: 12px; margin-top: 14px; font-size: 13px; color: #db2777; line-height: 1.5; }
+.lock-banner { background: #fef2f2; border: 2px solid #fca5a5; padding: 20px; border-radius: 16px; text-align: center; margin-top: 10px; }
+.install-banner { background: #eef2ff; border: 2px solid #c7d2fe; padding: 14px; border-radius: 14px; text-align: center; margin-bottom: 14px; }
 </style>
 </head>
 <body>
@@ -90,8 +105,17 @@ input:focus, select:focus, textarea:focus { border-color: var(--primary); backgr
       <p id="t_setupSub">Apna Online Store Sirf 1 Minute Mein Banao</p>
     </div>
     <div class="body-content">
+      
+      <!-- Install App Prompt Banner -->
+      <div id="installAppBanner" class="install-banner hidden">
+        <b style="color: var(--primary); font-size: 14px;" id="t_instTitle">📱 Dukan One ko App banayein!</b>
+        <p class="small" style="margin-top: 4px;" id="t_instDesc">Apne mobile par aik click mein isay install karein:</p>
+        <button class="btn btn-primary btn-sm" style="margin-top: 8px;" onclick="installPWAApp()">📥 Install App on Home Screen</button>
+      </div>
+
       <div class="card">
         <h3 id="t_setupHeading" style="margin-bottom: 14px; font-size: 16px;">✨ Nayi Dukaan Setup Karo</h3>
+        
         <label id="t_lblShopName">Dukaan Ka Naam *</label>
         <input id="shopName" placeholder="Misal: Fatima Boutique">
         
@@ -103,6 +127,19 @@ input:focus, select:focus, textarea:focus { border-color: var(--primary); backgr
         
         <label id="t_lblCats">Categories (Comma separated) *</label>
         <input id="shopCategories" placeholder="Misal: Abaya, Lawn, Suits, Jewellery">
+
+        <label id="t_lblLogo">Dukaan Ka Logo / Photo (Optional)</label>
+        <input type="file" id="shopLogoInput" accept="image/*" onchange="previewLogo(this)">
+        <img id="logoPreview" style="display:none; width:60px; height:60px; border-radius:50%; object-fit:cover; margin-top:8px; border:2px solid var(--primary);">
+
+        <label id="t_lblColor">Brand Theme Color</label>
+        <div class="color-grid">
+          <div class="color-dot active" style="background:#4f46e5;" onclick="selColor(this, '#4f46e5')"></div>
+          <div class="color-dot" style="background:#db2777;" onclick="selColor(this, '#db2777')"></div>
+          <div class="color-dot" style="background:#059669;" onclick="selColor(this, '#059669')"></div>
+          <div class="color-dot" style="background:#d97706;" onclick="selColor(this, '#d97706')"></div>
+          <div class="color-dot" style="background:#0f172a;" onclick="selColor(this, '#0f172a')"></div>
+        </div>
 
         <label id="t_lblPin">4 Digit PIN (Password) *</label>
         <input id="ownerPin" type="password" placeholder="Misal: 1234" maxlength="4">
@@ -128,69 +165,97 @@ input:focus, select:focus, textarea:focus { border-color: var(--primary); backgr
         </div>
 
         <div id="t_payInfo" class="payment-box">
-          <b>💳 JazzCash / EasyPaisa Payment Info:</b><br>
-          Paid packages ke liye is number par payment bhejiye: <b>0333-2286382</b> (Title: Zaki / ZTax Solutions) aur payment ka screenshot hamein dein.
+          <b>💳 JazzCash Payment Info:</b><br>
+          Paid packages ke liye is number par payment bhejiye:<br>
+          <b>Name: Muhammad Zaki Hussain</b><br>
+          <b>JazzCash: 03222286382</b><br>
+          Payment bhej kar screenshot WhatsApp par lazmi bhejein.
         </div>
 
         <button id="t_btnSetup" class="btn btn-success" onclick="doSetup()">✨ Dukaan Shuru Karo</button>
-        
-        <!-- Owner Secret Admin Login Link -->
-        <button class="btn btn-outline" style="margin-top: 20px; border-style: dashed; font-size: 13px;" onclick="showAdminLogin()">👑 Owner Admin Portal Login</button>
       </div>
     </div>
   </div>
 
   <!-- 2. SELLER DASHBOARD VIEW -->
   <div id="dashView" class="hidden">
-    <div class="header">
+    <div class="header" id="dashHeader">
       <button class="lang-btn" onclick="toggleLanguage()">🌐 <span id="langText2">English</span></button>
+      <img id="dashLogoImg" class="shop-logo-circle hidden" src="">
       <h1 id="dashShopName">DUKAN</h1>
       <p id="dashPkgInfo">Active Plan</p>
     </div>
     <div class="body-content">
-      
-      <div class="stats-box">
-        <div class="stat-card">
-          <span id="t_statOrders">Total Orders</span>
-          <h3 id="statOrders">0</h3>
+
+      <!-- EXPIRY LOCK SCREEN -->
+      <div id="expiredLockScreen" class="hidden">
+        <div class="lock-banner">
+          <div style="font-size: 40px; margin-bottom: 10px;">🔒</div>
+          <h3 style="color: #dc2626; margin-bottom: 8px;" id="t_lockTitle">Aapka Package Khatam Ho Gaya Hai!</h3>
+          <p style="font-size: 13px; color: #7f1d1d; line-height: 1.5;" id="t_lockDesc">
+            Apni dukaan aur customer order link dobara chalu karne ke liye JazzCash par payment bhejiye:<br><br>
+            <b>Name: Muhammad Zaki Hussain</b><br>
+            <b>JazzCash: 03222286382</b>
+          </p>
+          <a id="renewWaBtn" target="_blank" href="https://wa.me/923222286382?text=Assalam-o-Alaikum%2C%20mujhe%20apni%20Dukan%20One%20ka%20package%20renew%20karwana%20hai." class="wa-chat-btn" style="margin-top: 15px;">
+            💬 Admin ko Payment Screenshot Bhejein
+          </a>
+          <button class="btn btn-outline btn-sm" style="margin-top: 14px;" onclick="logout()">🔄 Switch Store / Logout</button>
         </div>
-        <div class="stat-card">
-          <span id="t_statSales">Total Sales</span>
-          <h3 id="statSales">Rs 0</h3>
+      </div>
+
+      <!-- ACTIVE DASHBOARD CONTENT -->
+      <div id="activeDashContent">
+        <div class="stats-box">
+          <div class="stat-card">
+            <span id="t_statOrders">Total Orders</span>
+            <h3 id="statOrders">0</h3>
+          </div>
+          <div class="stat-card">
+            <span id="t_statSales">Total Sales</span>
+            <h3 id="statSales">Rs 0</h3>
+          </div>
         </div>
+
+        <div class="card" style="background: #f8fafc; border-color: #cbd5e1;">
+          <label id="t_lblBioLink" style="color: var(--primary); margin-top:0;">🔗 Instagram / FB / WhatsApp Bio Link</label>
+          <p id="t_bioDesc" class="small">Yeh link apne status ya bio par lagayein (Customers ko sirf Order Form dikhega):</p>
+          <div class="link-box" id="custLinkDisplay">https://...</div>
+          <button id="t_btnCopy" class="btn btn-primary" style="margin-top: 10px; padding: 10px;" onclick="copyStoreLink()">📋 Customer Link Copy Karo</button>
+        </div>
+
+        <button id="t_btnTestCust" class="btn btn-dark" onclick="showCustomerView(store)">🛍️ Customer Order Form Dekho (Test)</button>
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; margin: 20px 0 10px;">
+          <h3 id="t_ordersTitle" style="font-size: 16px; font-weight: 700;">📦 Orders</h3>
+          <select id="categoryFilter" style="width: auto; padding: 6px 10px; font-size: 12px;" onchange="loadOrders()">
+            <option id="t_optAll" value="ALL">Sab Categories</option>
+          </select>
+        </div>
+
+        <div id="ordersContainer"></div>
+
+        <button id="t_btnLogout" class="btn btn-outline" style="color: #ef4444; border-color: #fca5a5; margin-top: 30px;" onclick="logout()">🔒 Logout / Switch Store</button>
       </div>
 
-      <div class="card" style="background: #eef2ff; border-color: #c7d2fe;">
-        <label id="t_lblBioLink" style="color: var(--primary); margin-top:0;">🔗 Instagram / FB / WhatsApp Bio Link</label>
-        <p id="t_bioDesc" class="small">Yeh link apne status ya bio par lagayein (Customers ko sirf Order Form dikhega):</p>
-        <div class="link-box" id="custLinkDisplay">https://...</div>
-        <button id="t_btnCopy" class="btn btn-primary" style="margin-top: 10px; padding: 10px;" onclick="copyStoreLink()">📋 Customer Link Copy Karo</button>
-      </div>
-
-      <button id="t_btnTestCust" class="btn btn-dark" onclick="showCustomerView(store)">🛍️ Customer Order Form Dekho (Test)</button>
-      
-      <div style="display: flex; justify-content: space-between; align-items: center; margin: 20px 0 10px;">
-        <h3 id="t_ordersTitle" style="font-size: 16px; font-weight: 700;">📦 Orders</h3>
-        <select id="categoryFilter" style="width: auto; padding: 6px 10px; font-size: 12px;" onchange="loadOrders()">
-          <option id="t_optAll" value="ALL">Sab Categories</option>
-        </select>
-      </div>
-
-      <div id="ordersContainer"></div>
-
-      <button id="t_btnLogout" class="btn btn-outline" style="color: #ef4444; border-color: #fca5a5; margin-top: 30px;" onclick="logout()">🔒 Logout / Switch Store</button>
     </div>
   </div>
 
   <!-- 3. CUSTOMER ORDER FORM VIEW -->
   <div id="custView" class="hidden">
-    <div class="header">
+    <div class="header" id="custHeader">
       <button class="lang-btn" onclick="toggleLanguage()">🌐 <span id="langText3">English</span></button>
+      <img id="custLogoImg" class="shop-logo-circle hidden" src="">
       <h1 id="custShopTitle">DUKAN</h1>
       <p id="t_custSub">Apna Order Book Karein</p>
     </div>
     <div class="body-content">
-      <div class="card">
+      <div id="custExpiredBox" class="hidden lock-banner">
+        <h3>⚠️ Store Temporarily Unavailable</h3>
+        <p class="small" style="margin-top:6px;">Is store ka subscription plan expire ho chuka hai. Barah-e-karam store owner se rabta karein.</p>
+      </div>
+
+      <div class="card" id="custFormCard">
         <label id="t_cName">Aapka Naam *</label>
         <input id="cName" placeholder="Poora Naam">
 
@@ -232,28 +297,35 @@ input:focus, select:focus, textarea:focus { border-color: var(--primary); backgr
     </div>
   </div>
 
-  <!-- 4. OWNER ADMIN LOGIN & DASHBOARD VIEW -->
+  <!-- 4. HIDDEN OWNER ADMIN PORTAL (?admin=1) -->
   <div id="adminLoginView" class="hidden">
-    <div class="header" style="background: linear-gradient(135deg, #0f172a 0%, #334155 100%);">
-      <h1>👑 OWNER ADMIN PANEL</h1>
-      <p>Secure SaaS Management System</p>
+    <div class="header" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);">
+      <h1>👑 SaaS OWNER CONTROL</h1>
+      <p>Private Admin Portal (Muhammad Zaki Hussain)</p>
     </div>
     <div class="body-content">
       <div class="card" id="adminPinCard">
-        <label>Enter Owner Admin Secret PIN</label>
-        <input id="adminSecretPin" type="password" placeholder="Enter Secret PIN (e.g. 7860)" maxlength="6">
-        <button class="btn btn-primary" onclick="verifyAdminPin()">🔓 Login to Admin Portal</button>
-        <button class="btn btn-outline" style="margin-top:10px;" onclick="initApp()">⬅️ Back</button>
+        <label>Master Owner Secret PIN</label>
+        <input id="adminSecretPin" type="password" placeholder="Enter Master PIN" maxlength="6">
+        <button class="btn btn-dark" onclick="verifyAdminPin()">🔓 Unlock Owner Panel</button>
       </div>
 
       <div id="adminDashboardBox" class="hidden">
-        <h3 style="margin-bottom: 14px; font-size: 16px; color: var(--primary);">📊 Registered Sellers Management</h3>
-        <p class="small" style="margin-bottom: 14px;">Yahan aapke tamam paid/free sellers ka record aur unke packages ki details hongi:</p>
-        
+        <div class="stats-box">
+          <div class="stat-card">
+            <span>Total Shops</span>
+            <h3 id="admTotalShops">0</h3>
+          </div>
+          <div class="stat-card">
+            <span>Active Plans</span>
+            <h3 id="admActiveShops" style="color:var(--success);">0</h3>
+          </div>
+        </div>
+
+        <h3 style="margin-bottom: 10px; font-size: 15px;">📋 Registered Shop Owners</h3>
         <div id="sellersListContainer"></div>
 
         <button class="btn btn-danger" style="margin-top: 20px;" onclick="adminLogout()">🔒 Lock Admin Portal</button>
-        <button class="btn btn-outline" style="margin-top: 10px;" onclick="initApp()">⬅️ Exit to Home</button>
       </div>
     </div>
   </div>
@@ -262,7 +334,31 @@ input:focus, select:focus, textarea:focus { border-color: var(--primary); backgr
 
 <script>
 let currentLang = 'ur';
-let activeShopData = null; // Stores shop data whether from localStorage or URL
+let activeShopData = null;
+let selectedColor = '#4f46e5';
+let base64Logo = '';
+let base64Pic = '';
+let deferredPrompt = null;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById('installAppBanner').classList.remove('hidden');
+});
+
+function installPWAApp() {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then((choiceResult) => {
+      if (choiceResult.outcome === 'accepted') {
+        document.getElementById('installAppBanner').classList.add('hidden');
+      }
+      deferredPrompt = null;
+    });
+  } else {
+    alert(currentLang === 'ur' ? 'Aap apne browser menu (...) se "Add to Home Screen" par click karke isay app bana sakti hain!' : 'You can install this app via your browser menu (...) -> "Add to Home Screen"!');
+  }
+}
 
 const dict = {
   ur: {
@@ -274,13 +370,15 @@ const dict = {
     lblOwnerName: "Apna Naam *",
     lblPhone: "Mobile / WhatsApp Number *",
     lblCats: "Categories (Comma separated) *",
+    lblLogo: "Dukaan Ka Logo / Photo (Optional)",
+    lblColor: "Brand Theme Color",
     lblPin: "4 Digit PIN (Password) *",
     lblPkg: "Package Choose Karo",
     p0: "Pehle try karo",
     p1: "30 Din ke liye",
     p2: "Bari bachat",
     p3: "Best value",
-    payInfo: "<b>💳 JazzCash / EasyPaisa Payment Info:</b><br>Paid packages ke liye is number par payment bhejiye: <b>0333-2286382</b> (Title: Zaki / ZTax Solutions) aur payment ka screenshot hamein dein.",
+    payInfo: "<b>💳 JazzCash Payment Info:</b><br>Paid packages ke liye is number par payment bhejiye:<br><b>Name: Muhammad Zaki Hussain</b><br><b>JazzCash: 03222286382</b><br>Payment bhej kar screenshot WhatsApp par lazmi bhejein.",
     btnSetup: "✨ Dukaan Shuru Karo",
     statOrders: "Total Orders",
     statSales: "Total Sales",
@@ -302,7 +400,9 @@ const dict = {
     cPrice: "Price (Rs)",
     cPic: "Item Ki Picture / Screenshot (Optional)",
     btnSubmitOrder: "✅ Order Confirm Karein",
-    btnBack: "⬅️ Back to Dashboard"
+    btnBack: "⬅️ Back to Dashboard",
+    instTitle: "📱 Dukan One ko App banayein!",
+    instDesc: "Apne mobile par aik click mein isay install karein:"
   },
   en: {
     langLabel: "اردو",
@@ -313,13 +413,15 @@ const dict = {
     lblOwnerName: "Your Name *",
     lblPhone: "Mobile / WhatsApp Number *",
     lblCats: "Categories (Comma separated) *",
+    lblLogo: "Shop Logo / Photo (Optional)",
+    lblColor: "Brand Theme Color",
     lblPin: "4 Digit PIN (Password) *",
     lblPkg: "Choose Package",
     p0: "Try first",
     p1: "For 30 Days",
     p2: "Great savings",
     p3: "Best value",
-    payInfo: "<b>💳 JazzCash / EasyPaisa Payment Info:</b><br>Send payment for paid packages to: <b>0333-2286382</b> (Title: Zaki / ZTax Solutions) and share screenshot with us.",
+    payInfo: "<b>💳 JazzCash Payment Info:</b><br>Send payment to:<br><b>Name: Muhammad Zaki Hussain</b><br><b>JazzCash: 03222286382</b><br>Share screenshot on WhatsApp.",
     btnSetup: "✨ Start Shop",
     statOrders: "Total Orders",
     statSales: "Total Sales",
@@ -341,9 +443,46 @@ const dict = {
     cPrice: "Price (Rs)",
     cPic: "Item Picture / Screenshot (Optional)",
     btnSubmitOrder: "✅ Confirm Order",
-    btnBack: "⬅️ Back to Dashboard"
+    btnBack: "⬅️ Back to Dashboard",
+    instTitle: "📱 Make Dukan One an App!",
+    instDesc: "Install it on your mobile with one click:"
   }
 };
+
+function applyThemeColor(color) {
+  document.documentElement.style.setProperty('--primary', color || '#4f46e5');
+}
+
+function selColor(el, color) {
+  document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
+  el.classList.add('active');
+  selectedColor = color;
+  applyThemeColor(color);
+}
+
+function previewLogo(input) {
+  const file = input.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const img = new Image();
+    img.onload = function() {
+      const canvas = document.createElement('canvas');
+      const maxW = 150;
+      let scale = maxW / img.width;
+      if(scale > 1) scale = 1;
+      canvas.width = img.width * scale;
+      canvas.height = img.height * scale;
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+      base64Logo = canvas.toDataURL('image/jpeg', 0.7);
+      const prev = document.getElementById('logoPreview');
+      prev.src = base64Logo;
+      prev.style.display = 'block';
+    }
+    img.src = e.target.result;
+  }
+  reader.readAsDataURL(file);
+}
 
 function toggleLanguage() {
   currentLang = currentLang === 'ur' ? 'en' : 'ur';
@@ -363,6 +502,8 @@ function updateTexts() {
   document.getElementById('t_lblOwnerName').innerText = t.lblOwnerName;
   document.getElementById('t_lblPhone').innerText = t.lblPhone;
   document.getElementById('t_lblCats').innerText = t.lblCats;
+  document.getElementById('t_lblLogo').innerText = t.lblLogo;
+  document.getElementById('t_lblColor').innerText = t.lblColor;
   document.getElementById('t_lblPin').innerText = t.lblPin;
   document.getElementById('t_lblPkg').innerText = t.lblPkg;
   document.getElementById('t_p0').innerText = t.p0;
@@ -394,6 +535,8 @@ function updateTexts() {
   document.getElementById('t_cPic').innerText = t.cPic;
   document.getElementById('t_btnSubmitOrder').innerText = t.btnSubmitOrder;
   document.getElementById('t_btnBack').innerText = t.btnBack;
+  document.getElementById('t_instTitle').innerText = t.instTitle;
+  document.getElementById('t_instDesc').innerText = t.instDesc;
 }
 
 function getStorage(k) { try { return localStorage.getItem(k); } catch(e) { return null; } }
@@ -401,7 +544,6 @@ function setStorage(k, v) { try { localStorage.setItem(k, v); } catch(e) { alert
 
 let store = JSON.parse(getStorage('dukan_store') || 'null');
 let selectedPkgDays = '7', selectedPkgName = '7 Days Free Trial', selectedPkgPrice = '0';
-let base64Pic = '';
 
 function selPkg(el, days, name, price) {
   document.querySelectorAll('.pkg').forEach(p => p.classList.remove('sel'));
@@ -424,15 +566,19 @@ function doSetup() {
   }
 
   const categories = catsInput.split(',').map(c => c.trim()).filter(c => c.length > 0);
-
   let expiry = new Date();
   expiry.setDate(expiry.getDate() + Number(selectedPkgDays));
 
+  const shopId = 'SHOP_' + Date.now();
   store = {
+    id: shopId,
     name, owner, phone, pin,
     categories,
+    color: selectedColor,
+    logo: base64Logo,
     pkg: selectedPkgName,
-    expiry: expiry.toISOString()
+    expiry: expiry.toISOString(),
+    blocked: false
   };
 
   setStorage('dukan_store', JSON.stringify(store));
@@ -440,8 +586,12 @@ function doSetup() {
   
   let allSellers = JSON.parse(getStorage('dukan_all_sellers') || '[]');
   allSellers.push({
-    id: Date.now(),
-    name, owner, phone, pkg: selectedPkgName, expiry: expiry.toISOString(), date: new Date().toLocaleDateString()
+    id: shopId,
+    name, owner, phone,
+    pkg: selectedPkgName,
+    expiry: expiry.toISOString(),
+    date: new Date().toLocaleDateString(),
+    blocked: false
   });
   setStorage('dukan_all_sellers', JSON.stringify(allSellers));
 
@@ -452,24 +602,42 @@ function generateSmartLink(shopObj) {
   const payload = {
     n: shopObj.name,
     p: shopObj.phone,
-    c: shopObj.categories
+    c: shopObj.categories,
+    col: shopObj.color || '#4f46e5',
+    exp: shopObj.expiry,
+    blk: shopObj.blocked || false
   };
   const encoded = btoa(encodeURIComponent(JSON.stringify(payload)));
   return location.href.split('?')[0] + '?shop=' + encoded;
 }
 
+function isPlanExpired(expiryIso, blockedFlag) {
+  if(blockedFlag) return true;
+  if(!expiryIso) return false;
+  return new Date() > new Date(expiryIso);
+}
+
 function initApp() {
   const params = new URLSearchParams(location.search);
-  const encodedShop = params.get('shop');
 
-  // Agar link mein ?shop=... hai, toh yeh customer view hai (kisi bhi mobile par khulega)
+  if(params.get('admin') === '1') {
+    showView('adminLoginView');
+    document.getElementById('adminPinCard').classList.remove('hidden');
+    document.getElementById('adminDashboardBox').classList.add('hidden');
+    return;
+  }
+
+  const encodedShop = params.get('shop');
   if(encodedShop) {
     try {
       const decoded = JSON.parse(decodeURIComponent(atob(encodedShop)));
       const urlShopData = {
         name: decoded.n,
         phone: decoded.p,
-        categories: decoded.c || ['General']
+        categories: decoded.c || ['General'],
+        color: decoded.col || '#4f46e5',
+        expiry: decoded.exp,
+        blocked: decoded.blk || false
       };
       showCustomerView(urlShopData, true);
       return;
@@ -479,22 +647,51 @@ function initApp() {
   }
 
   if(!store) {
+    applyThemeColor('#4f46e5');
     showView('setupView');
   } else {
+    let allSellers = JSON.parse(getStorage('dukan_all_sellers') || '[]');
+    let found = allSellers.find(s => s.id === store.id || s.phone === store.phone);
+    if(found) {
+      store.expiry = found.expiry;
+      store.pkg = found.pkg;
+      store.blocked = found.blocked;
+      setStorage('dukan_store', JSON.stringify(store));
+    }
+
+    applyThemeColor(store.color || '#4f46e5');
     showView('dashView');
     document.getElementById('dashShopName').innerText = store.name;
-    document.getElementById('dashPkgInfo').innerText = (currentLang === 'ur' ? 'Plan: ' : 'Plan: ') + store.pkg;
     
-    let filterSelect = document.getElementById('categoryFilter');
-    let filterHtml = `<option id="t_optAll" value="ALL">${dict[currentLang].optAll}</option>`;
-    store.categories.forEach(cat => {
-      filterHtml += `<option value="${cat}">${cat}</option>`;
-    });
-    filterSelect.innerHTML = filterHtml;
+    const expDateStr = new Date(store.expiry).toLocaleDateString();
+    document.getElementById('dashPkgInfo').innerText = `${store.pkg} (Exp: ${expDateStr})`;
 
-    const smartLink = generateSmartLink(store);
-    document.getElementById('custLinkDisplay').innerText = smartLink;
-    loadOrders();
+    const logoEl = document.getElementById('dashLogoImg');
+    if(store.logo) {
+      logoEl.src = store.logo;
+      logoEl.classList.remove('hidden');
+    } else {
+      logoEl.classList.add('hidden');
+    }
+
+    if(isPlanExpired(store.expiry, store.blocked)) {
+      document.getElementById('expiredLockScreen').classList.remove('hidden');
+      document.getElementById('activeDashContent').classList.add('hidden');
+    } else {
+      document.getElementById('expiredLockScreen').classList.add('hidden');
+      document.getElementById('activeDashContent').classList.remove('hidden');
+
+      let filterSelect = document.getElementById('categoryFilter');
+      let filterHtml = `<option id="t_optAll" value="ALL">${dict[currentLang].optAll}</option>`;
+      store.categories.forEach(cat => {
+        filterHtml += `<option value="${cat}">${cat}</option>`;
+      });
+      filterSelect.innerHTML = filterHtml;
+
+      const smartLink = generateSmartLink(store);
+      document.getElementById('custLinkDisplay').innerText = smartLink;
+      loadOrders();
+    }
   }
   updateTexts();
 }
@@ -504,13 +701,6 @@ function showView(id) {
   document.getElementById(id).classList.remove('hidden');
 }
 
-function showAdminLogin() {
-  showView('adminLoginView');
-  document.getElementById('adminPinCard').classList.remove('hidden');
-  document.getElementById('adminDashboardBox').classList.add('hidden');
-  document.getElementById('adminSecretPin').value = '';
-}
-
 function verifyAdminPin() {
   const pin = document.getElementById('adminSecretPin').value.trim();
   if(pin === '7860') {
@@ -518,7 +708,7 @@ function verifyAdminPin() {
     document.getElementById('adminDashboardBox').classList.remove('hidden');
     loadSellersList();
   } else {
-    alert('Galat Secret PIN! Yeh sirf Dukan One ke Owner ke liye hai.');
+    alert('Access Denied! Invalid Owner Secret PIN.');
   }
 }
 
@@ -526,24 +716,46 @@ function loadSellersList() {
   const sellers = JSON.parse(getStorage('dukan_all_sellers') || '[]');
   const container = document.getElementById('sellersListContainer');
 
+  document.getElementById('admTotalShops').innerText = sellers.length;
+  const activeCount = sellers.filter(s => !isPlanExpired(s.expiry, s.blocked)).length;
+  document.getElementById('admActiveShops').innerText = activeCount;
+
   if(sellers.length === 0) {
-    container.innerHTML = `<p class="center small" style="padding:20px;">Abhi tak koi seller register nahi hua.</p>`;
+    container.innerHTML = `<p class="center small" style="padding:20px;">No shops registered yet.</p>`;
     return;
   }
 
   let html = '';
-  sellers.forEach((s) => {
+  sellers.forEach((s, idx) => {
+    const expired = isPlanExpired(s.expiry, s.blocked);
+    const statusBadge = expired 
+      ? `<span class="badge badge-expired">Expired / Locked</span>` 
+      : `<span class="badge badge-active">Active</span>`;
+
+    let waPhone = s.phone.replace(/[^0-9]/g, '');
+    if(waPhone.startsWith('0')) waPhone = '92' + waPhone.slice(1);
+
     html += `
       <div class="order-card">
         <div class="order-header">
           <span class="order-title">🏪 ${s.name}</span>
-          <span class="badge">${s.pkg}</span>
+          ${statusBadge}
         </div>
         <div class="order-details">
-          👤 Owner: <b>${s.owner}</b><br>
-          📞 Phone: <b>${s.phone}</b><br>
-          📅 Registered: ${s.date}<br>
-          ⏳ Expiry: ${new Date(s.expiry).toLocaleDateString()}
+          👤 Owner: <b>${s.owner}</b> | 📞 <b>${s.phone}</b><br>
+          📦 Plan: <b>${s.pkg}</b><br>
+          ⏳ Expiry: <b>${new Date(s.expiry).toLocaleDateString()}</b>
+          
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:10px;">
+            <button class="btn btn-primary btn-sm" onclick="extendSellerPlan(${idx}, 30, 'Monthly Plan')">+30 Days</button>
+            <button class="btn btn-success btn-sm" onclick="extendSellerPlan(${idx}, 180, '6 Months Plan')">+6 Months</button>
+            <button class="btn btn-dark btn-sm" onclick="extendSellerPlan(${idx}, 365, '1 Year Plan')">+1 Year</button>
+            <button class="btn btn-danger btn-sm" onclick="toggleBlockSeller(${idx})">${s.blocked ? '🔓 Unblock' : '🔒 Lock Shop'}</button>
+          </div>
+
+          <a class="wa-chat-btn" target="_blank" href="https://wa.me/${waPhone}?text=${encodeURIComponent('Assalam-o-Alaikum ' + s.owner + ', aapka Dukan One (' + s.name + ') ka package update/activate kar diya gaya hai!')}">
+            💬 WhatsApp Seller
+          </a>
         </div>
       </div>
     `;
@@ -551,15 +763,36 @@ function loadSellersList() {
   container.innerHTML = html;
 }
 
+function extendSellerPlan(index, days, planName) {
+  let sellers = JSON.parse(getStorage('dukan_all_sellers') || '[]');
+  let newExpiry = new Date();
+  newExpiry.setDate(newExpiry.getDate() + days);
+  sellers[index].expiry = newExpiry.toISOString();
+  sellers[index].pkg = planName;
+  sellers[index].blocked = false;
+  setStorage('dukan_all_sellers', JSON.stringify(sellers));
+  alert(`✅ ${sellers[index].name} ka package ${planName} (${days} days) ke liye activate kar diya gaya!`);
+  loadSellersList();
+}
+
+function toggleBlockSeller(index) {
+  let sellers = JSON.parse(getStorage('dukan_all_sellers') || '[]');
+  sellers[index].blocked = !sellers[index].blocked;
+  setStorage('dukan_all_sellers', JSON.stringify(sellers));
+  loadSellersList();
+}
+
 function adminLogout() {
-  showView('setupView');
+  document.getElementById('adminSecretPin').value = '';
+  document.getElementById('adminPinCard').classList.remove('hidden');
+  document.getElementById('adminDashboardBox').classList.add('hidden');
 }
 
 function copyStoreLink() {
   if(!store) return;
   const link = generateSmartLink(store);
   navigator.clipboard.writeText(link);
-  alert(currentLang === 'ur' ? '✨ Smart Customer Link Copy Ho Gaya!\nAb aap isay kisi ko bhi bhejein, unhein sirf Order Form hi dikhega!' : '✨ Smart Customer Link Copied!\nAnyone opening this link will directly see your Order Form!');
+  alert(currentLang === 'ur' ? '✨ Smart Customer Link Copy Ho Gaya!\nAb aap isay kisi ko bhi bhejein, unhein sirf Order Form hi dikhega!' : '✨ Smart Customer Link Copied!');
 }
 
 function showCustomerView(shopObj, isExternalCustomer = false) {
@@ -569,21 +802,37 @@ function showCustomerView(shopObj, isExternalCustomer = false) {
     return; 
   }
   activeShopData = shopObj;
+  applyThemeColor(shopObj.color || '#4f46e5');
   document.getElementById('custShopTitle').innerText = shopObj.name;
-  
-  let catSelect = document.getElementById('cCategory');
-  let catHtml = '';
-  shopObj.categories.forEach(cat => {
-    catHtml += `<option value="${cat}">${cat}</option>`;
-  });
-  catSelect.innerHTML = catHtml;
 
-  // Hide "Back to Dashboard" button if opened by a real customer via link
-  const backBtn = document.getElementById('t_btnBack');
-  if(isExternalCustomer) {
-    backBtn.classList.add('hidden');
+  const custLogo = document.getElementById('custLogoImg');
+  if(shopObj.logo) {
+    custLogo.src = shopObj.logo;
+    custLogo.classList.remove('hidden');
   } else {
-    backBtn.classList.remove('hidden');
+    custLogo.classList.add('hidden');
+  }
+
+  if(isPlanExpired(shopObj.expiry, shopObj.blocked)) {
+    document.getElementById('custExpiredBox').classList.remove('hidden');
+    document.getElementById('custFormCard').classList.add('hidden');
+  } else {
+    document.getElementById('custExpiredBox').classList.add('hidden');
+    document.getElementById('custFormCard').classList.remove('hidden');
+
+    let catSelect = document.getElementById('cCategory');
+    let catHtml = '';
+    shopObj.categories.forEach(cat => {
+      catHtml += `<option value="${cat}">${cat}</option>`;
+    });
+    catSelect.innerHTML = catHtml;
+
+    const backBtn = document.getElementById('t_btnBack');
+    if(isExternalCustomer) {
+      backBtn.classList.add('hidden');
+    } else {
+      backBtn.classList.remove('hidden');
+    }
   }
 
   showView('custView');
@@ -630,7 +879,6 @@ function submitOrder() {
     return;
   }
 
-  // Save locally if seller is testing on own device
   if(store && store.phone === activeShopData.phone) {
     const orders = JSON.parse(getStorage('dukan_orders') || '[]');
     orders.unshift({
@@ -714,7 +962,7 @@ function deleteOrder(index) {
 }
 
 function logout() {
-  if(confirm(currentLang === 'ur' ? 'Kya aap logout karna chahte hain? (Aapka data save rahega)' : 'Do you want to logout? (Your data will remain saved)')) {
+  if(confirm(currentLang === 'ur' ? 'Kya aap logout karna chahte hain?' : 'Do you want to logout?')) {
     localStorage.removeItem('dukan_store');
     store = null;
     initApp();
