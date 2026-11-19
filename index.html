@@ -239,7 +239,7 @@ input:focus, select:focus, textarea:focus { border-color: var(--primary); backgr
           <button class="btn btn-primary" style="margin-top: 10px; padding: 10px;" onclick="copyStoreLink()">📋 Customer Link Copy Karo</button>
         </div>
 
-        <button class="btn btn-dark" onclick="showCustomerView(store)">🛍️ Customer Order Form Dekho (Test)</button>
+        <button class="btn btn-dark" onclick="showCustomerView(localStore)">🛍️ Customer Order Form Dekho (Test)</button>
         
         <div style="display: flex; justify-content: space-between; align-items: center; margin: 20px 0 10px;">
           <h3 style="font-size: 16px; font-weight: 700;">📦 Orders</h3>
@@ -359,19 +359,18 @@ input:focus, select:focus, textarea:focus { border-color: var(--primary); backgr
 </div>
 
 <script>
-// --- FIREBASE CLOUD DATABASE SETUP ---
-// REPLACE with your free Firebase project credentials
+// --- FIREBASE CLOUD DATABASE SETUP (LIVE CONFIG) ---
 const firebaseConfig = {
-  apiKey: "YOUR_FIREBASE_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
-  projectId: "YOUR_PROJECT",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyCel00cNA_DDa1VniBtFey5IuxoGNad6Mk", //[span_3](start_span)[span_3](end_span)
+  authDomain: "dukaan-one.firebaseapp.com", //[span_4](start_span)[span_4](end_span)
+  databaseURL: "https://dukaan-one-default-rtdb.asia-southeast1.firebasedatabase.app", //[span_5](start_span)[span_5](end_span)[span_6](start_span)[span_6](end_span)
+  projectId: "dukaan-one", //[span_7](start_span)[span_7](end_span)
+  storageBucket: "dukaan-one.firebasestorage.app", //[span_8](start_span)[span_8](end_span)
+  messagingSenderId: "536027830228", //[span_9](start_span)[span_9](end_span)
+  appId: "1:536027830228:web:53a7e30d65b900dc93a841", //[span_10](start_span)[span_10](end_span)
+  measurementId: "G-JV8MM9BYMB" //[span_11](start_span)[span_11](end_span)
 };
 
-// Initialize Firebase
 let db;
 try {
   firebase.initializeApp(firebaseConfig);
@@ -383,7 +382,7 @@ try {
 // --- SECURE XSS SANITIZATION ---
 function escapeHTML(str) {
   if (!str) return '';
-  return str.replace(/[&<>'"]/g, 
+  return String(str).replace(/[&<>'"]/g, 
     tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
   );
 }
@@ -471,7 +470,6 @@ function previewLogo(input) {
 
 function toggleLanguage() {
   currentLang = currentLang === 'ur' ? 'en' : 'ur';
-  // UI texts toggle logic can be expanded here
 }
 
 function getStorage(k) { try { return localStorage.getItem(k); } catch(e) { return null; } }
@@ -600,7 +598,7 @@ function initApp() {
 function renderSellerDashboard() {
   applyThemeColor(localStore.color || '#4f46e5');
   showView('dashView');
-  document.getElementById('dashShopNameinnerText', document.getElementById('dashShopName').innerText = localStore.name);
+  document.getElementById('dashShopName').innerText = localStore.name;
   
   const expDateStr = new Date(localStore.expiry).toLocaleDateString();
   document.getElementById('dashPkgInfo').innerText = `${localStore.pkg} (Exp: ${expDateStr})`;
@@ -821,7 +819,7 @@ function submitOrder() {
     db.ref('orders/' + activeShopData.id + '/' + orderId).set(orderObj);
   }
 
-  document.getElementById('orderSuccessMsginnerText', document.getElementById('orderSuccessMsg').innerText = '🎉 Order Placed Successfully! Redirecting to WhatsApp...');
+  document.getElementById('orderSuccessMsg').innerText = '🎉 Order Placed Successfully! Redirecting to WhatsApp...';
   
   let sellerPhone = activeShopData.phone.replace(/[^0-9]/g, '');
   if(sellerPhone.startsWith('0')) sellerPhone = '92' + sellerPhone.slice(1);
